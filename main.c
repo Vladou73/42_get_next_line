@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:42:28 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/07 19:34:12 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/07 21:06:17 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,15 @@
 
 int main(void)
 {
-	char c[1000];
+	char *res = NULL;
 	int fd = open("./text.txt", O_RDONLY);
 
 	printf("fd=%d\n", fd);
-	printf("BUFFER_SIZE=%d\n", BUFFER_SIZE);
-	read(fd, c, BUFFER_SIZE);
-	printf("c=%s\n",c);
+	//printf("BUFFER_SIZE=%d\n", BUFFER_SIZE);	
+	//read(fd, res, BUFFER_SIZE);
+	
+	res = get_next_line(fd);
+	printf("res=%s\n",res);
 	
 	return (0);
 }

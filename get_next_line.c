@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:02:05 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/07 21:52:32 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/08 15:51:03 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,20 @@
 
 #include "get_next_line.h"
 
+char *ft_read_file(int fd, int size)
+{
+	char	*temp;
+	int		bytes_read;
+	
+	temp = malloc(sizeof(char) * (size + 1));
+	if (!temp)
+		return (NULL);
+	bytes_read = read(fd, temp, size);
+	//printf("temp=%s\n", temp);
+	if (!bytes_read)
+		return (NULL);
+	return (temp);
+}
 
 char *get_next_line(int fd)
 {
@@ -23,63 +37,97 @@ char *get_next_line(int fd)
 	static char	*st_rest;
 	char		*res;
 	char		*temp;
-	int			bytes_read;
-
-	//res = NULL;
+	char		*temp2;
+	char		*temp3;
+	int			i;
+	
+	res = NULL;
 	temp = NULL;
-
-	printf("BUFFER_SIZE=%d\n",BUFFER_SIZE);
-
+	temp2 = NULL;
+	temp3 = NULL;
+	
+	printf("initial st_rest=%s\n",st_rest);
+	
 	//2) open file and read file once (= not possible to close file and reopen it).
-
 	//Read must use BUFFER_SIZE (=number of bytes read at once)
-
 	//a)allocate memory to a ptr (size of BUFFER_SIZE). if fail, protect
 	//b)Read the number of chars allowed by BUFFER_SIZE and store them into the pointer
-	res = malloc(sizeof(char) * (sizeof(BUFFER_SIZE) + 1));
-	if (!res)
-		return NULL; //+ FREE ?
+		//if bytes_read < BUFFER_SIZE : the file is finished ==> how to check this ?
+
+
+	//******************* INITIALIZE ***********************
+
+	//initialization first read
+	temp = ft_read_file(fd, BUFFER_SIZE);
+	if (!temp)
+		return (NULL);
+	printf("initialize temp=%s\n", temp);
+
+	//search for \n in temp
+	temp2 = ft_strchr(temp, '\n');
+	if (temp2) // si on a trouve un \n on passe au caractere suivant
+		temp2++;
+	printf("initialize temp2=%s\n", temp2);
+
+	//if there is a \n, store 1st line in res and return it. Store the rest in st_rest
+	if (temp2)
+	{
+		res = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+		ft_strlcpy(res, temp, ft_strlen(temp) - ft_strlen(temp2) + 1);
+		st_rest = ft_strdup(temp2); //FREE ?
+		return (res);
+	}
+
+	//store in res the beginning of the line
+	res = ft_strdup(temp);
+	printf("initialize res=%s\n\n", res);
+
 	
-	bytes_read = read(fd, res, BUFFER_SIZE);
-	printf("bytes_read=%d\n",bytes_read);
-	//if bytes_read < BUFFER_SIZE : the file is finished ==> how to check this ?
+	//******************* ENTER WHILE LOOP ***********************
+	i = 0;
+	while (temp)
+	{
+		printf("loop %d\n", i);
+		//read file
+		temp = ft_read_file(fd, BUFFER_SIZE);
+		
+		//search for linebreak in temp
+		temp2 = ft_strchr(temp, '\n');
+		if (temp2) // si on a trouve un \n on passe juste au caractere suivant
+			temp2++;
+		printf("temp2=*%s*\n", temp2); //dans temp2 il y a le reste du texte a stocker dans la variable static
+		
+		//if there is a \n, store the totality of the 1st line in res and return it. Store the rest (after line break) in st_rest
+		if (temp2)
+		{
+			//we need to concatenate content already stored in res (beginning of line) + the content coming from last read untli end of line
+			temp3 = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+			ft_strlcpy(temp3, temp, ft_strlen(temp) - ft_strlen(temp2) + 1);
+			temp = res; // FREE temp before
+			res = ft_strjoin(temp, temp3); //need to add free of both sources;
+			
+			st_rest = ft_strdup(temp2); //FREE temp2 afterwards
+			return (res);
+		}
+		
+		//on join le contenu deja present dans res avec le nouveau contenu lu present dans temp. pour cela on alloue
+		temp2 = res;
+		if (temp)
+			res = ft_strjoin(temp2, temp); //need to add free of both sources;
+		printf("res=%s\n\n", res);
+		i++;
+	}
+
+
+	//printf("res=%s\n",res);
+	//printf("temp=%s\n",temp);
+	
 	
 	//need to check if there is a \n in res.
 	//If so, need to stop to this end of line, and store the rest in static char.
 	//for the next call of function gnl, if there is sthg in static var, directly goes into static var, 
 	//check for end of line. if there is one, store in res until the end of line. next call, rebelote
-	printf("res=%s\n",res);
-	temp = ft_strchr(res, (int)('\n'));
 	
-	//while (*res)
-	//{
-	//	printf("%c\n",*res);
-	//	//if (*ptr == (char) c)
-	//	//	return (ptr);
-	//	res++;
-	//}
-	
-	printf("temp=%s\n",temp);
-	if (temp)
-	{
-		printf("il y a un retour a la ligne dans notre buffer\n");
-		res = malloc(sizeof(char) * (ft_strlen(res) - ft_strlen(temp) + 1)); //FREE ?
-		ft_strlcpy(res, res, ft_strlen(res) - ft_strlen(temp) + 1); 
-		
-		st_rest = ft_strdup(temp); //FREE ?
-	}
-	
-	
-	printf("st_rest=%s\n",st_rest);
-	
-	//while loop : until \n is not reached, continue to append BUFFER_SIZE strings by successive readings.
-	
-	//read(fd, temp, BUFFER_SIZE);
-	//res = ft_strjoin(res, temp);
-	//free memory : temp (+ res ?)
-
-	//once \n is reached, put the whole line in the static variable static_var, and return it
-
 	//read behaviour :
 	//if read fails (file not readable, invalid fd) return 0 ou -1 ?;
 	//if there is nothing more to read, returns 0

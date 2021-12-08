@@ -1,1 +1,4 @@
-Bonjour \r\n Hola \r\n Hello \r\n Guten Tag
+Bonjour
+Hola
+Hello
+Guten Tag

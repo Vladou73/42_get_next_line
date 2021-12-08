@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:37:44 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/07 21:51:45 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/08 12:17:12 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ size_t	ft_strlen(const char *s)
 {
 	size_t	i;
 
+	if (!s)
+		return (0);
 	i = 0;
 	while (s[i])
 		i++;
@@ -30,7 +32,6 @@ char	*ft_strchr(const char *s, int c)
 	ptr = (char *)s;
 	while (*ptr)
 	{
-		printf("%c\n",*ptr);
 		if (*ptr == (char) c)
 			return (ptr);
 		ptr++;

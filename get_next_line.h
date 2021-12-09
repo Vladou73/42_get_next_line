@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:01:08 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/07 21:45:21 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/09 12:43:55 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,12 @@
 
 
 char	*get_next_line(int fd);
-size_t	ft_strlen(const char *s);
-char	*ft_strchr(const char *s, int c);
-char	*ft_strjoin(char const *s1, char const *s2);
-size_t	ft_strlcpy(char *dst, const char *src, size_t dst_size);
-char	*ft_strdup(const char *s);
-size_t	ft_strlcat(char *dst, const char *src, size_t size);
+size_t	ft_strlen(char *s);
+char	*ft_strchr(char *s, int c);
+char	*ft_strjoin_free(char *s1, char *s2);
+size_t	ft_strlcpy(char *dst, char *src, size_t dst_size);
+char	*ft_strdup(char *s);
+size_t	ft_strlcat(char *dst, char *src, size_t size);
+void	ft_free_null_ptr(char **ptr);
 
 #endif

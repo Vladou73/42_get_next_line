@@ -6,14 +6,24 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:37:44 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/09 10:51:20 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/09 12:42:33 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+void	ft_free_null_ptr(char **ptr)
+{
+   
+   if (*ptr)
+   {
+	   printf("FREEME=%p || %s\n", ptr, *ptr);
+	   free(*ptr);
+	   *ptr = NULL;
+   }
+}
 
-size_t	ft_strlen(const char *s)
+size_t	ft_strlen(char *s)
 {
 	size_t	i;
 
@@ -25,7 +35,7 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_strchr(char *s, int c)
 {
 	char	*ptr;
 	
@@ -34,6 +44,8 @@ char	*ft_strchr(const char *s, int c)
 	ptr = (char *)s;
 	while (*ptr)
 	{
+		if (*ptr == '\0')
+			return (NULL);
 		if (*ptr == (char) c)
 			return (ptr);
 		ptr++;
@@ -44,7 +56,7 @@ char	*ft_strchr(const char *s, int c)
 }
 
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*dst;
 	size_t	dst_size;
@@ -55,10 +67,12 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		return (NULL);
 	ft_strlcpy(dst, s1, dst_size);
 	ft_strlcat(dst, s2, dst_size);
+	ft_free_null_ptr(&s1);
+	ft_free_null_ptr(&s2);
 	return (dst);
 }
 
-char	*ft_strdup(const char *s)
+char	*ft_strdup(char *s)
 {
 	char	*dup;
 	int		i;
@@ -76,7 +90,7 @@ char	*ft_strdup(const char *s)
 	return (dup);
 }
 
-size_t	ft_strlcpy(char *dst, const char *src, size_t dst_size)
+size_t	ft_strlcpy(char *dst, char *src, size_t dst_size)
 {
 	size_t	i;
 	size_t	src_size;
@@ -94,7 +108,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dst_size)
 	return (src_size);
 }
 
-size_t	ft_strlcat(char *dst, const char *src, size_t size)
+size_t	ft_strlcat(char *dst, char *src, size_t size)
 {
 	size_t	i;
 	size_t	j;

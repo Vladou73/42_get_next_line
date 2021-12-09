@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:02:05 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/09 11:07:13 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/09 12:40:58 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ char *ft_read_file(int fd, int size)
 	if (!temp)
 		return (NULL);
 	bytes_read = read(fd, temp, size);
+	printf("temp after read=%s\n", temp);
 	printf("bytes_read=%d\n", bytes_read);
 	if (!bytes_read)
 		return (NULL);
@@ -77,6 +78,7 @@ char *get_next_line(int fd)
 	
 	//store in res what was retrieved from initialization
 	res = ft_strdup(temp); //free source
+	
 	printf("initialize res=%s\n\n", res);
 
 	//******************* ENTER WHILE LOOP ***********************
@@ -85,7 +87,10 @@ char *get_next_line(int fd)
 	{
 		printf("loop %d\n", i);
 		//read file
-		temp = ft_read_file(fd, BUFFER_SIZE);
+		printf("temp before read=%s\n", temp);
+		ft_free_null_ptr(&temp);
+		temp = ft_read_file(fd, BUFFER_SIZE); //free temp ?
+
 		//search for linebreak in temp
 		temp2 = ft_strchr(temp, '\n');
 		if (temp2) // si on a trouve un \n on passe juste au caractere suivant
@@ -99,7 +104,7 @@ char *get_next_line(int fd)
 			temp3 = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 			ft_strlcpy(temp3, temp, ft_strlen(temp) - ft_strlen(temp2) + 1);
 			temp = res; // FREE temp before
-			res = ft_strjoin(temp, temp3); //need to add free of both sources;
+			res = ft_strjoin_free(temp, temp3); //need to add free of both sources;
 			
 			st_rest = ft_strdup(temp2); //FREE temp2 afterwards
 			printf("st_rest=*%s*\n", st_rest);
@@ -108,8 +113,11 @@ char *get_next_line(int fd)
 		
 		//on join le contenu deja present dans res avec le nouveau contenu lu present dans temp. pour cela on alloue
 		temp2 = res;
+		//printf("join1=%s\n", temp2);
+		//printf("join2=%s\n", temp);
 		if (temp)
-			res = ft_strjoin(temp2, temp); //need to add free of both sources;
+			res = ft_strjoin_free(temp2, temp); //need to add free of both sources;
+		printf("temp end while loop=%s\n", temp);
 		printf("res=%s\n\n", res);
 		i++;
 	}

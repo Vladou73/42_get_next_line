@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:02:05 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/08 15:51:03 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/09 11:07:13 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ char *ft_read_file(int fd, int size)
 {
 	char	*temp;
 	int		bytes_read;
-	
+
 	temp = malloc(sizeof(char) * (size + 1));
 	if (!temp)
 		return (NULL);
 	bytes_read = read(fd, temp, size);
-	//printf("temp=%s\n", temp);
+	printf("bytes_read=%d\n", bytes_read);
 	if (!bytes_read)
 		return (NULL);
 	return (temp);
@@ -48,17 +48,13 @@ char *get_next_line(int fd)
 	
 	printf("initial st_rest=%s\n",st_rest);
 	
-	//2) open file and read file once (= not possible to close file and reopen it).
-	//Read must use BUFFER_SIZE (=number of bytes read at once)
-	//a)allocate memory to a ptr (size of BUFFER_SIZE). if fail, protect
-	//b)Read the number of chars allowed by BUFFER_SIZE and store them into the pointer
-		//if bytes_read < BUFFER_SIZE : the file is finished ==> how to check this ?
-
-
 	//******************* INITIALIZE ***********************
 
 	//initialization first read
-	temp = ft_read_file(fd, BUFFER_SIZE);
+	if (st_rest) // if there is already data in st_rest, don't read file. initialize temp with data stored in static (ie data stored from last read)
+		temp = ft_strdup(st_rest);
+	else
+		temp = ft_read_file(fd, BUFFER_SIZE);
 	if (!temp)
 		return (NULL);
 	printf("initialize temp=%s\n", temp);
@@ -74,15 +70,15 @@ char *get_next_line(int fd)
 	{
 		res = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		ft_strlcpy(res, temp, ft_strlen(temp) - ft_strlen(temp2) + 1);
+		
 		st_rest = ft_strdup(temp2); //FREE ?
 		return (res);
 	}
-
-	//store in res the beginning of the line
-	res = ft_strdup(temp);
+	
+	//store in res what was retrieved from initialization
+	res = ft_strdup(temp); //free source
 	printf("initialize res=%s\n\n", res);
 
-	
 	//******************* ENTER WHILE LOOP ***********************
 	i = 0;
 	while (temp)
@@ -90,7 +86,6 @@ char *get_next_line(int fd)
 		printf("loop %d\n", i);
 		//read file
 		temp = ft_read_file(fd, BUFFER_SIZE);
-		
 		//search for linebreak in temp
 		temp2 = ft_strchr(temp, '\n');
 		if (temp2) // si on a trouve un \n on passe juste au caractere suivant
@@ -107,6 +102,7 @@ char *get_next_line(int fd)
 			res = ft_strjoin(temp, temp3); //need to add free of both sources;
 			
 			st_rest = ft_strdup(temp2); //FREE temp2 afterwards
+			printf("st_rest=*%s*\n", st_rest);
 			return (res);
 		}
 		
@@ -118,29 +114,14 @@ char *get_next_line(int fd)
 		i++;
 	}
 
-
-	//printf("res=%s\n",res);
-	//printf("temp=%s\n",temp);
-	
-	
-	//need to check if there is a \n in res.
-	//If so, need to stop to this end of line, and store the rest in static char.
-	//for the next call of function gnl, if there is sthg in static var, directly goes into static var, 
-	//check for end of line. if there is one, store in res until the end of line. next call, rebelote
-	
 	//read behaviour :
 	//if read fails (file not readable, invalid fd) return 0 ou -1 ?;
 	//if there is nothing more to read, returns 0
-
 	
 	//return OK : read entire line from the fd
 	//return NULL if error occured or if there is nothing else to read	
 	return (res);
 }
-
-// call a file descriptor
-
-//while loop : while there is sthg to read in the fd, call getnextline
 
 //Important: The returned line should include the ’\n’, except if you have reached
 //the end of file and there is no ’\n’.

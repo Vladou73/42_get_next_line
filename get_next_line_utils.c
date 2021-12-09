@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:37:44 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/08 12:17:12 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/09 10:51:20 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ size_t	ft_strlen(const char *s)
 char	*ft_strchr(const char *s, int c)
 {
 	char	*ptr;
-
+	
+	if (!s)
+		return (NULL);
 	ptr = (char *)s;
 	while (*ptr)
 	{

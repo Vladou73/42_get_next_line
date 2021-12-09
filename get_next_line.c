@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 15:02:05 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/09 12:40:58 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:11:36 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,15 @@
 
 #include "get_next_line.h"
 
-char *ft_read_file(int fd, int size)
+int	ft_read_file(int fd, int size, char **temp)
 {
-	char	*temp;
 	int		bytes_read;
 
-	temp = malloc(sizeof(char) * (size + 1));
-	if (!temp)
-		return (NULL);
-	bytes_read = read(fd, temp, size);
-	printf("temp after read=%s\n", temp);
-	printf("bytes_read=%d\n", bytes_read);
-	if (!bytes_read)
-		return (NULL);
-	return (temp);
+	*temp = malloc(sizeof(char) * (size + 1));
+	if (!*temp)
+		return (0);
+	bytes_read = read(fd, *temp, size);
+	return (bytes_read);
 }
 
 char *get_next_line(int fd)
@@ -41,6 +36,7 @@ char *get_next_line(int fd)
 	char		*temp2;
 	char		*temp3;
 	int			i;
+	int			bytes_read;
 	
 	res = NULL;
 	temp = NULL;
@@ -53,16 +49,19 @@ char *get_next_line(int fd)
 
 	//initialization first read
 	if (st_rest) // if there is already data in st_rest, don't read file. initialize temp with data stored in static (ie data stored from last read)
-		temp = ft_strdup(st_rest);
+		{
+			temp = ft_strdup(st_rest);
+			ft_free_null_ptr(&st_rest);
+		}
 	else
-		temp = ft_read_file(fd, BUFFER_SIZE);
+		bytes_read = ft_read_file(fd, BUFFER_SIZE, &temp);
 	if (!temp)
 		return (NULL);
 	printf("initialize temp=%s\n", temp);
 
-	//search for \n in temp
+	//search for \n or \0 (end of file) in temp
 	temp2 = ft_strchr(temp, '\n');
-	if (temp2) // si on a trouve un \n on passe au caractere suivant
+	if (temp2) // si on a trouve un \n on passe au caractere suivant le retour a la ligne. \\\\\ATTENTION///// si on est en fin de document est ce que ca fonctionne ?
 		temp2++;
 	printf("initialize temp2=%s\n", temp2);
 
@@ -70,26 +69,28 @@ char *get_next_line(int fd)
 	if (temp2)
 	{
 		res = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+		if (!res) //si l'allocation echoue il faut free tous les autres pointeurs ?
+			return (NULL);
 		ft_strlcpy(res, temp, ft_strlen(temp) - ft_strlen(temp2) + 1);
-		
 		st_rest = ft_strdup(temp2); //FREE ?
+		ft_free_null_ptr(&temp);
+		ft_free_null_ptr(&temp2);
 		return (res);
 	}
 	
 	//store in res what was retrieved from initialization
 	res = ft_strdup(temp); //free source
-	
 	printf("initialize res=%s\n\n", res);
 
 	//******************* ENTER WHILE LOOP ***********************
 	i = 0;
-	while (temp)
+	while (bytes_read > 0)
 	{
 		printf("loop %d\n", i);
-		//read file
-		printf("temp before read=%s\n", temp);
+		//free if needed ptr temp, then read file and store in it
 		ft_free_null_ptr(&temp);
-		temp = ft_read_file(fd, BUFFER_SIZE); //free temp ?
+		bytes_read = ft_read_file(fd, BUFFER_SIZE, &temp);
+		printf("bytes_read=%d\n", bytes_read);
 
 		//search for linebreak in temp
 		temp2 = ft_strchr(temp, '\n');
@@ -104,7 +105,7 @@ char *get_next_line(int fd)
 			temp3 = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 			ft_strlcpy(temp3, temp, ft_strlen(temp) - ft_strlen(temp2) + 1);
 			temp = res; // FREE temp before
-			res = ft_strjoin_free(temp, temp3); //need to add free of both sources;
+			res = ft_strjoin_free(&temp, &temp3); //need to add free of both sources;
 			
 			st_rest = ft_strdup(temp2); //FREE temp2 afterwards
 			printf("st_rest=*%s*\n", st_rest);
@@ -116,8 +117,7 @@ char *get_next_line(int fd)
 		//printf("join1=%s\n", temp2);
 		//printf("join2=%s\n", temp);
 		if (temp)
-			res = ft_strjoin_free(temp2, temp); //need to add free of both sources;
-		printf("temp end while loop=%s\n", temp);
+			res = ft_strjoin_free(&temp2, &temp); //need to add free of both sources;
 		printf("res=%s\n\n", res);
 		i++;
 	}

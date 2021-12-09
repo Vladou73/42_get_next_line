@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:37:44 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/09 12:42:33 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/09 13:54:30 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 
 void	ft_free_null_ptr(char **ptr)
 {
-   
    if (*ptr)
    {
-	   printf("FREEME=%p || %s\n", ptr, *ptr);
 	   free(*ptr);
 	   *ptr = NULL;
    }
@@ -56,19 +54,19 @@ char	*ft_strchr(char *s, int c)
 }
 
 
-char	*ft_strjoin_free(char *s1, char *s2)
+char	*ft_strjoin_free(char **s1, char **s2)
 {
 	char	*dst;
 	size_t	dst_size;
 
-	dst_size = ft_strlen(s1) + ft_strlen(s2) + 1;
+	dst_size = ft_strlen(*s1) + ft_strlen(*s2) + 1;
 	dst = malloc(sizeof(char) * dst_size);
 	if (!dst)
 		return (NULL);
-	ft_strlcpy(dst, s1, dst_size);
-	ft_strlcat(dst, s2, dst_size);
-	ft_free_null_ptr(&s1);
-	ft_free_null_ptr(&s2);
+	ft_strlcpy(dst, *s1, dst_size);
+	ft_strlcat(dst, *s2, dst_size);
+	ft_free_null_ptr(s1);
+	ft_free_null_ptr(s2);
 	return (dst);
 }
 

@@ -6,11 +6,12 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:42:28 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/10 15:50:26 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/10 19:02:52 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int main(void)
 {

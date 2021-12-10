@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:42:28 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/09 11:07:42 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/10 12:19:17 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ int main(void)
 	printf("BUFFER_SIZE=%d\n\n\n", BUFFER_SIZE);
 	//read(fd, res, BUFFER_SIZE);
 	
-	int i = 0;
-	while (i < 5)
+	int i = 1;
+	while (i < 6)
 	{
 		res = get_next_line(fd);
-		printf("res=***%s***\n\n\n\n",res);
+		printf("line%d=***%s***\n\n",i,res);
 		i++;
 	}
 	close(fd);

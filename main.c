@@ -6,7 +6,7 @@
 /*   By: vnafissi <vnafissi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 18:42:28 by vnafissi          #+#    #+#             */
-/*   Updated: 2021/12/10 12:31:11 by vnafissi         ###   ########.fr       */
+/*   Updated: 2021/12/10 14:12:54 by vnafissi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,12 @@ int main(void)
 	//read(fd, res, BUFFER_SIZE);
 	
 	int i = 1;
-	while ((res = get_next_line(fd)))
+	while (i < 100)
 	{
-		
+		res = get_next_line(fd);
 		printf("line%d=***%s***\n\n",i,res);
+		if (*res == 0)
+			break;
 		i++;
 	}
 	close(fd);
